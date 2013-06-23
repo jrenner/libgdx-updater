@@ -80,8 +80,9 @@ def get_remote_archive_mtime():
 # downloads and returns a temporary file contained the latest nightly archive
 def download_libgdx_zip():
     libgdx = tempfile.TemporaryFile()
-    #url = "http://libgdx.badlogicgames.com/nightlies/libgdx-nightly-latest.zip"
-    url = "http://localhost/libgdx-nightly-latest.zip"
+    url = "http://libgdx.badlogicgames.com/nightlies/libgdx-nightly-latest.zip"
+    # testing url - don't hammer badlogic server, host the file on localhost instead
+    # url = "http://localhost/libgdx-nightly-latest.zip"
     resp = urllib2.urlopen(url)
     print "downloading file: %s" % url
     total_size = resp.info().getheader('Content-Length').strip()
