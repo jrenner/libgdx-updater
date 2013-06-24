@@ -36,6 +36,8 @@ YES = ['y', 'ye', 'yes', '']
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
+SUPPORTED_PLATFORMS = ['android', 'desktop']
+
 CORE_LIBS = ["gdx.jar",
              "gdx-sources.jar"]
 
@@ -174,7 +176,7 @@ def search_for_lib_locations(directory):
                     locations[element] = this_dir                   
     for lib, loc in locations.items():
         if loc == None:
-            print "WARNING: did not find library %s in this directory tree" % lib
+            print "WARNING: did not find library %s in directory tree of: %s" % (lib, directory)
     found_libraries = [lib for lib, loc in locations.items() if locations[lib] != None]
     if found_all_in_set(CORE_LIBS, found_libraries):
         platforms.append("core")
@@ -191,12 +193,15 @@ def found_all_in_set(lib_set, found_list):
             return False
     return True
 
-def main():
+def main():    
     start_time = time.time()
+    print "supported platforms:"
+    for supported in SUPPORTED_PLATFORMS:
+        print "\t%s" % supported.upper()
     print "finding local libraries in %s" % PROJECT_DIR
     platforms, locations = search_for_lib_locations(PROJECT_DIR)
     if "core" not in platforms:
-        fatal_error("did not find CORE libraries (%s) in project directory tree" % str(CORE_LIBS))
+        fatal_error("did not find CORE libraries %s in project directory tree" % str(CORE_LIBS))
     else:
         print "found CORE libraries"
     for plat in platforms:
