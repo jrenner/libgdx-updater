@@ -36,7 +36,7 @@ YES = ['y', 'ye', 'yes', '']
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
-SUPPORTED_PLATFORMS = ['android', 'desktop']
+SUPPORTED_PLATFORMS = ['android', 'desktop', 'gwt']
 
 CORE_LIBS = ["gdx.jar",
              "gdx-sources.jar"]
@@ -50,6 +50,8 @@ ANDROID_LIBS = ["gdx-backend-android.jar",
                 "armeabi/libandroidgl20.so",
                 "armeabi-v7a/libgdx.so",
                 "armeabi-v7a/libandroidgl20.so"]
+
+GWT_LIBS = ["gdx-backend-gwt.jar"]                
 
 # parse arguments
 EPILOGUE_TEXT = "%s\n%s" % (__author__, __url__) + "\nUSE AT YOUR OWN RISK!"
@@ -145,6 +147,9 @@ def run_desktop(locations, archive):
     title("DESKTOP")
     update_files(DESKTOP_LIBS, locations, archive)    
 
+def run_gwt(locations, archive):
+    title("GWT")
+    update_files(GWT_LIBS, locations, archive)
 
 def search_for_lib_locations(directory):    
     platforms = []
@@ -184,6 +189,8 @@ def search_for_lib_locations(directory):
         platforms.append("android")
     if found_all_in_set(DESKTOP_LIBS, found_libraries):
         platforms.append("desktop")
+    if found_all_in_set(GWT_LIBS, found_libraries):
+        platforms.append("gwt")
     return platforms, locations
         
 
@@ -195,18 +202,17 @@ def found_all_in_set(lib_set, found_list):
 
 def main():    
     start_time = time.time()
-    print "supported platforms:"
-    for supported in SUPPORTED_PLATFORMS:
-        print "\t%s" % supported.upper()
     print "finding local libraries in %s" % PROJECT_DIR
     platforms, locations = search_for_lib_locations(PROJECT_DIR)
     if "core" not in platforms:
         fatal_error("did not find CORE libraries %s in project directory tree" % str(CORE_LIBS))
     else:
         print "found CORE libraries"
-    for plat in platforms:
-        if plat != "core":
-            print "found libraries for platform: %s" % plat.upper()
+    for supported in SUPPORTED_PLATFORMS:
+        if supported in platforms:
+            print "found libraries for platform: %s" % supported.upper()
+        else:
+            print "WARNING: did not find libraries for platform: %s - WILL NOT UPDATE" % supported.upper()
 
     if ARCHIVE == None:
         print "checking latest nightly..."
@@ -233,6 +239,8 @@ def main():
             run_desktop(locations, archive)
         if "android" in platforms:
             run_android(locations, archive)
+        if "gwt" in platforms:
+            run_gwt(locations, archive)
 
     duration = time.time() - start_time    
     print "finished updates in %s" % human_time(duration)
