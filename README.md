@@ -3,13 +3,14 @@ libgdx-updater
 
 Libgdx Library Updater
 
---------------
+
 A command line Python script for updating all your libgdx libraries inside your project/workspace directory
 
 Does not require eclipse, it finds your library files by itself, checks the nightlies server for the latest nightly, and updates your files.
 
 With command line arguments you can update with a specific zip file.
 
+==================
 ###How to Use?
 Either run the script with python in your project/workspace directory, or to specify a directory:
 ```
@@ -21,10 +22,10 @@ $ python libgdx-updater.py -a <PATH_TO_ARCHIVE>
 ```
 run the script with -h to see more options
 
----------------
-###Example Usage:
+=================
+###Example Usage
+(running in project directory)
 ```
-jrenner@main:~/projects/missile$ cp ../libgdx_updater/libgdx_update.py .
 jrenner@main:~/projects/missile$ python libgdx_update.py 
 finding local libraries in /home/jrenner/projects/missile
 found CORE libraries
