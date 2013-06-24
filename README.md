@@ -1,4 +1,4 @@
-###Libgdx Library Updater
+##Libgdx Library Updater
 =========================
 
 This is a command line utility for updating the libgdx libraries inside your project's directory tree.
