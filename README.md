@@ -10,7 +10,19 @@ Does not require eclipse, it finds your library files by itself, checks the nigh
 
 With command line arguments you can update with a specific zip file.
 
-Example Usage:
+#How to Use?
+Either run the script with python in your project/workspace directory, or to specify a directory:
+```
+$ python libgdx-updater.py -d <YOUR_PROJECT_DIRECTORY>
+```
+You may also specify an archive to update from with:
+```
+$ python libgdx-updater.py -a <PATH_TO_ARCHIVE>
+```
+run the script with -h to see more options
+
+---------------
+#Example Usage:
 ```
 jrenner@main:~/projects/missile$ cp ../libgdx_updater/libgdx_update.py .
 jrenner@main:~/projects/missile$ python libgdx_update.py 
