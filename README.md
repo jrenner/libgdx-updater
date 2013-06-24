@@ -1,14 +1,16 @@
-libgdx-updater
-==============
+###Libgdx Library Updater
+=========================
 
-Libgdx Library Updater
+This is a command line utility for updating the libgdx libraries inside your project's directory tree.
+Although libgdx already has a GUI utility for updating libgdx libraries inside a project, it only works with Eclipse projects (to my knowledge).
+This python script works by walking through the directory tree and figuring out where you have stored the libraries, so it is IDE agnostic.
+It does not depend on Eclipse, IntelliJ IDEA or any other project/workspace structure.
+First it will check and download the latest nightly from the nightlies server, or use an archive you specify as a command line argument.
+Then this archive will be used to update the libraries inside your project. 
 
-
-A command line Python script for updating all your libgdx libraries inside your project/workspace directory
-
-Does not require eclipse, it finds your library files by itself, checks the nightlies server for the latest nightly, and updates your files.
-
-With command line arguments you can update with a specific zip file.
+====================
+###Note:
+currently only supports Android and Desktop, please create an issue if you need other platforms
 
 ==================
 ###How to Use?
