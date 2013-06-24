@@ -2,10 +2,12 @@
 __appname__ = 'libgdx_library_updater'
 __version__ = "0.1"
 __author__ = "Jon Renner <rennerjc@gmail.com>"
-__url__ = "http://www.github.com/jrenner/I_HAVEN'T_SET_THIS_YET_I_HOPE_YOU_DON'T_SEE_THIS"
+__url__ = "http://github.com/jrenner/libgdx-updater"
 __licence__ = "MIT"
 
 import os, time, sys, urllib2, re, datetime, tempfile, zipfile, argparse
+
+# error handling functions and utils
 
 def fatal_error(msg):
     print "ERROR: %s" % msg
@@ -14,16 +16,25 @@ def fatal_error(msg):
 def warning_error(msg):
     print "WARNING: %s" % msg
     if not FORCE:
-        answer = raw_input("abort? (Y/n): ")
+        answer = confirm("abort? (Y/n): ")
         if answer in YES:
             fatal_error("USER QUIT")            
+
+def confirm(msg):
+    answer = raw_input(msg)
+    return answer.lower()
+
+def human_time(t):
+    minutes = t / 60
+    seconds = t % 60
+    return "%.0fm %.1fs" % (minutes, seconds)    
 
 # constants
 
 YES = ['y', 'ye', 'yes', '']
+# for finding the time of the latest nightly build from the web page html
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
-NIGHTLY_URL = "http://libgdx.badlogicgames.com/nightlies/dist/"
 
 CORE_LIBS = ["gdx.jar",
              "gdx-sources.jar"]
@@ -97,7 +108,7 @@ def download_libgdx_zip():
         bytes_read += len(chunk)        
         bytes_read_megabytes = bytes_read / 1000000.0
         percent = (bytes_read / float(total_size)) * 100
-        sys.stdout.write("\rprogress: {:>8}{:.2f} / {:.2f} mB ({:.0f}%% complete)".format(
+        sys.stdout.write("\rprogress: {:>8}{:.2f} / {:.2f} mB ({:.0f}% complete)".format(
             "", bytes_read_megabytes, total_size_megabytes, percent))
         sys.stdout.flush()
         if bytes_read >= total_size:
@@ -109,7 +120,7 @@ def update_files(libs, locations, archive):
     for lib in libs:        
         if lib in archive.namelist():            
             if INTERACTIVE:
-                answer = raw_input("overwrite %s? (Y/n): " % lib)
+                answer = confirm("overwrite %s? (Y/n): " % lib)
                 if answer not in YES:                    
                     print "skipped: %s" % lib        
                     continue
@@ -133,7 +144,8 @@ def run_desktop(locations, archive):
     update_files(DESKTOP_LIBS, locations, archive)    
 
 
-def search_for_lib_locations(directory):
+def search_for_lib_locations(directory):    
+    platforms = []
     search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS
     locations = {}    
     for element in search_list:
@@ -156,29 +168,47 @@ def search_for_lib_locations(directory):
                     if locations[element] != None:
                         print "WARNING: found %s in more than one place!" % element
                         if not FORCE:
-                            answer = raw_input("continue? (Y/n): ")
+                            answer = confirm("continue? (Y/n): ")
                             if answer not in YES:
                                 fatal_error("USER ABORT")
-                    locations[element] = this_dir
+                    locations[element] = this_dir                   
     for lib, loc in locations.items():
         if loc == None:
-            warning_error("WARNING: did not find library %s in this directory tree!\nchange current directory or project path as argument" % lib)
-    return locations
+            print "WARNING: did not find library %s in this directory tree" % lib
+    found_libraries = [lib for lib, loc in locations.items() if locations[lib] != None]
+    if found_all_in_set(CORE_LIBS, found_libraries):
+        platforms.append("core")
+    if found_all_in_set(ANDROID_LIBS, found_libraries):
+        platforms.append("android")
+    if found_all_in_set(DESKTOP_LIBS, found_libraries):
+        platforms.append("desktop")
+    return platforms, locations
         
 
+def found_all_in_set(lib_set, found_list):
+    for lib in lib_set:
+        if lib not in found_list:
+            return False
+    return True
 
 def main():
+    start_time = time.time()
     print "finding local libraries in %s" % PROJECT_DIR
-    locations = search_for_lib_locations(PROJECT_DIR)
+    platforms, locations = search_for_lib_locations(PROJECT_DIR)
+    if "core" not in platforms:
+        fatal_error("did not find CORE libraries (%s) in project directory tree" % str(CORE_LIBS))
+    else:
+        print "found CORE libraries"
+    for plat in platforms:
+        if plat != "core":
+            print "found libraries for platform: %s" % plat.upper()
 
-    for lib, loc in locations.items():
-        print "location of %s -> %s" % (lib, loc)    
     if ARCHIVE == None:
         print "checking latest nightly..."
         mtime = get_remote_archive_mtime()
         print "lastest nightly from server: %s" % mtime
         if not FORCE:
-            answer = raw_input("replace local libraries with files from latest nightly?(Y/n): ")    
+            answer = confirm("replace local libraries with files from latest nightly?(Y/n): ")    
             if answer not in YES:
                 fatal_error("USER QUIT")
         libgdx = download_libgdx_zip()        
@@ -186,16 +216,21 @@ def main():
         if not os.path.exists(ARCHIVE):
             fatal_error("archive file not found: %s" % ARCHIVE)
         if not FORCE:
-            answer = raw_input("replace local libraries with files from '%s'?(Y/n): " % os.path.basename(ARCHIVE))    
+            answer = confirm("replace local libraries with files from '%s'?(Y/n): " % os.path.basename(ARCHIVE))    
             if answer not in YES:
                 fatal_error("USER QUIT")
         libgdx = open(ARCHIVE, "r")
 
-    with zipfile.ZipFile(libgdx) as archive:        
-        run_core(locations, archive)
-        run_desktop(locations, archive)
-        run_android(locations, archive)
+    with zipfile.ZipFile(libgdx) as archive:
+        if "core" in platforms:        
+            run_core(locations, archive)
+        if "desktop" in platforms:
+            run_desktop(locations, archive)
+        if "android" in platforms:
+            run_android(locations, archive)
 
+    duration = time.time() - start_time    
+    print "finished updates in %s" % human_time(duration)
     libgdx.close()
 
 def title(text):
