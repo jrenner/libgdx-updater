@@ -28,11 +28,12 @@ run the script with -h to see more options
 ###Example Usage
 (running in project directory)
 ```
-jrenner@main:~/projects/missile$ python libgdx_update.py 
+jrenner@main:~/projects/missile$ python libgdx_update.py
 finding local libraries in /home/jrenner/projects/missile
 found CORE libraries
 found libraries for platform: ANDROID
 found libraries for platform: DESKTOP
+WARNING: did not find libraries for platform: GWT - WILL NOT UPDATE
 checking latest nightly...
 -- OK --
 lastest nightly from server: 2013-06-22 03:45:00
