@@ -10,7 +10,7 @@ Then this archive will be used to update the libraries inside your project.
 
 ====================
 ###Note:
-currently only supports Android and Desktop and GWT (in addition to core libraries)
+Currently supports Android, Desktop and GWT
 
 ==================
 ###How to Use?

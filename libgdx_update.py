@@ -112,11 +112,11 @@ def download_libgdx_zip():
         bytes_read += len(chunk)        
         bytes_read_megabytes = bytes_read / 1000000.0
         percent = (bytes_read / float(total_size)) * 100
-        sys.stdout.write("\rprogress: {:>8}{:.2f} / {:.2f} mB ({:.0f}% complete)".format(
+        sys.stdout.write("\rprogress: {:>8}{:.2f} / {:.2f} MB ({:.0f}% complete)".format(
             "", bytes_read_megabytes, total_size_megabytes, percent))
         sys.stdout.flush()
         if bytes_read >= total_size:
-            print "finished download"
+            print "\nfinished download"
             break
     return libgdx
 
