@@ -1,6 +1,6 @@
 #!/usr/bin/python
 __appname__ = 'libgdx_library_updater'
-__version__ = "0.1"
+__version__ = "0.9"
 __author__ = "Jon Renner <rennerjc@gmail.com>"
 __url__ = "http://github.com/jrenner/libgdx-updater"
 __licence__ = "MIT"
@@ -121,19 +121,28 @@ def download_libgdx_zip():
     return libgdx
 
 def update_files(libs, locations, archive):    
-    for lib in libs:        
-        if lib in archive.namelist():            
+    for lib in libs:
+    	# it's time for a dirty hack - shame on me
+    	if lib == "gdx-sources.jar":
+    		archive_name = "sources/gdx-sources.jar"        
+    	else:
+    		archive_name = lib
+    	# end dirty hack
+        if archive_name in archive.namelist():            
             if INTERACTIVE:
                 answer = confirm("overwrite %s? (Y/n): " % lib)
                 if answer not in YES:                    
                     print "skipped: %s" % lib        
                     continue
-            with archive.open(lib, "r") as fin:
+            with archive.open(archive_name, "r") as fin:
                 filename = os.path.basename(lib)
                 final_path = os.path.join(locations[lib], filename)
                 with open(final_path, "w") as fout:
                     fout.write(fin.read())                    
                 print "extracted to %s" % final_path
+        else:
+        	warning_error("Couldn't find %s in .zip archive" % lib)
+
         
 def run_core(locations, archive):
     title("CORE")
@@ -153,7 +162,7 @@ def run_gwt(locations, archive):
 
 def search_for_lib_locations(directory):    
     platforms = []
-    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS
+    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + GWT_LIBS
     locations = {}    
     for element in search_list:
         locations[element] = None
@@ -179,9 +188,7 @@ def search_for_lib_locations(directory):
                             if answer not in YES:
                                 fatal_error("USER ABORT")
                     locations[element] = this_dir                   
-    for lib, loc in locations.items():
-        if loc == None:
-            print "WARNING: did not find library %s in directory tree of: %s" % (lib, directory)
+
     found_libraries = [lib for lib, loc in locations.items() if locations[lib] != None]
     if found_all_in_set(CORE_LIBS, found_libraries):
         platforms.append("core")
@@ -191,6 +198,15 @@ def search_for_lib_locations(directory):
         platforms.append("desktop")
     if found_all_in_set(GWT_LIBS, found_libraries):
         platforms.append("gwt")
+
+    print "WARNING - did not find the following:"
+    for lib, loc in locations.items():
+    	if loc == None:
+    		print "\t%s not found" % lib
+
+    for lib, loc in locations.items():
+    	if loc != None:
+    		print "found %s -> %s" % (lib, loc)
     return platforms, locations
         
 
