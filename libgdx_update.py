@@ -1,6 +1,6 @@
 #!/usr/bin/python
 __appname__ = 'libgdx_library_updater'
-__version__ = "0.9"
+__version__ = "0.91"
 __author__ = "Jon Renner <rennerjc@gmail.com>"
 __url__ = "http://github.com/jrenner/libgdx-updater"
 __licence__ = "MIT"
@@ -38,18 +38,22 @@ REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
 SUPPORTED_PLATFORMS = ['android', 'desktop', 'gwt']
 
-CORE_LIBS = ["gdx.jar",
-             "gdx-sources.jar"]
+CORE_LIBS = 	[
+				"gdx.jar",
+            	"gdx-sources.jar",
+            	]
 
-DESKTOP_LIBS = ["gdx-backend-lwjgl.jar",
+DESKTOP_LIBS = 	[
+				"gdx-backend-lwjgl.jar",
                 "gdx-backend-lwjgl-natives.jar",
-                "gdx-natives.jar"] 
+                "gdx-natives.jar",
+               	] 
 
-ANDROID_LIBS = ["gdx-backend-android.jar",
+ANDROID_LIBS = 	[
+				"gdx-backend-android.jar",
                 "armeabi/libgdx.so",
-                "armeabi/libandroidgl20.so",
                 "armeabi-v7a/libgdx.so",
-                "armeabi-v7a/libandroidgl20.so"]
+               	]
 
 GWT_LIBS = ["gdx-backend-gwt.jar"]                
 
