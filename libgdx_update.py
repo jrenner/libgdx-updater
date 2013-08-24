@@ -36,24 +36,28 @@ YES = ['y', 'ye', 'yes', '']
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
-SUPPORTED_PLATFORMS = ['android', 'desktop', 'gwt']
+SUPPORTED_PLATFORMS = ['android', 'android_x86', 'desktop', 'gwt']
 
-CORE_LIBS = 	[
-				"gdx.jar",
-            	"gdx-sources.jar",
-            	]
+CORE_LIBS =     [
+                "gdx.jar",
+                "gdx-sources.jar",
+                ]
 
-DESKTOP_LIBS = 	[
-				"gdx-backend-lwjgl.jar",
+DESKTOP_LIBS =  [
+                "gdx-backend-lwjgl.jar",
                 "gdx-backend-lwjgl-natives.jar",
                 "gdx-natives.jar",
-               	] 
+                ] 
 
-ANDROID_LIBS = 	[
-				"gdx-backend-android.jar",
+ANDROID_LIBS =  [
+                "gdx-backend-android.jar",
                 "armeabi/libgdx.so",
                 "armeabi-v7a/libgdx.so",
-               	]
+                ]
+
+ANDROID_X86_LIBS = [
+                "x86/libgdx.so",
+                   ]
 
 GWT_LIBS = ["gdx-backend-gwt.jar"]                
 
@@ -126,12 +130,12 @@ def download_libgdx_zip():
 
 def update_files(libs, locations, archive):    
     for lib in libs:
-    	# it's time for a dirty hack - shame on me
-    	if lib == "gdx-sources.jar":
-    		archive_name = "sources/gdx-sources.jar"        
-    	else:
-    		archive_name = lib
-    	# end dirty hack
+        # it's time for a dirty hack - shame on me
+        if lib == "gdx-sources.jar":
+            archive_name = "sources/gdx-sources.jar"        
+        else:
+            archive_name = lib
+        # end dirty hack
         if archive_name in archive.namelist():            
             if INTERACTIVE:
                 answer = confirm("overwrite %s? (Y/n): " % lib)
@@ -145,7 +149,7 @@ def update_files(libs, locations, archive):
                     fout.write(fin.read())                    
                 print "extracted to %s" % final_path
         else:
-        	warning_error("Couldn't find %s in .zip archive" % lib)
+            warning_error("Couldn't find %s in .zip archive" % lib)
 
         
 def run_core(locations, archive):
@@ -154,7 +158,11 @@ def run_core(locations, archive):
 
 def run_android(locations, archive):
     title("ANDROID")
-    update_files(ANDROID_LIBS, locations, archive)    
+    update_files(ANDROID_LIBS, locations, archive)
+
+def run_android_x86(locations, archive):
+    title("ANDROID_X86")
+    update_files(ANDROID_X86_LIBS, locations, archive)
 
 def run_desktop(locations, archive):
     title("DESKTOP")
@@ -166,7 +174,7 @@ def run_gwt(locations, archive):
 
 def search_for_lib_locations(directory):    
     platforms = []
-    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + GWT_LIBS
+    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + ANDROID_X86_LIBS + GWT_LIBS
     locations = {}    
     for element in search_list:
         locations[element] = None
@@ -198,6 +206,8 @@ def search_for_lib_locations(directory):
         platforms.append("core")
     if found_all_in_set(ANDROID_LIBS, found_libraries):
         platforms.append("android")
+    if found_all_in_set(ANDROID_X86_LIBS, found_libraries):
+        platforms.append("android_x86")
     if found_all_in_set(DESKTOP_LIBS, found_libraries):
         platforms.append("desktop")
     if found_all_in_set(GWT_LIBS, found_libraries):
@@ -205,12 +215,12 @@ def search_for_lib_locations(directory):
 
     print "WARNING - did not find the following:"
     for lib, loc in locations.items():
-    	if loc == None:
-    		print "\t%s not found" % lib
+        if loc == None:
+            print "\t%s not found" % lib
 
     for lib, loc in locations.items():
-    	if loc != None:
-    		print "found %s -> %s" % (lib, loc)
+        if loc != None:
+            print "found %s -> %s" % (lib, loc)
     return platforms, locations
         
 
