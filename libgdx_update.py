@@ -230,7 +230,8 @@ def found_all_in_set(lib_set, found_list):
             return False
     return True
 
-def main():    
+def main():
+    global ARCHIVE    
     start_time = time.time()
     print "finding local libraries in %s" % PROJECT_DIR
     platforms, locations = search_for_lib_locations(PROJECT_DIR)
@@ -256,6 +257,12 @@ def main():
     else:
         if not os.path.exists(ARCHIVE):
             fatal_error("archive file not found: %s" % ARCHIVE)
+        if os.path.isdir(ARCHIVE):
+            selected = select_archive_from_dir(ARCHIVE)
+            if selected == None:
+                fatal_error("no archive chosen to update with, check supplied argument: '%s'" % ARCHIVE)
+            else:
+                ARCHIVE = selected
         if not FORCE:
             answer = confirm("replace local libraries with files from '%s'?(Y/n): " % os.path.basename(ARCHIVE))    
             if answer not in YES:
@@ -275,6 +282,26 @@ def main():
     duration = time.time() - start_time    
     print "finished updates in %s" % human_time(duration)
     libgdx.close()
+
+def find_zips(path):
+    zips = []
+    for item in os.listdir(path):
+        pieces = item.split(".")
+        if len(pieces) > 0:
+            if (pieces[-1] == "zip"):
+                zips.append(item)
+    return zips    
+
+def select_archive_from_dir(archive_dir):
+    zips = find_zips(archive_dir)
+    if len(zips) == 0:
+        return None
+    for z in zips:
+        full_path = os.path.join(archive_dir, z)
+        answer = confirm("use archive '%s'? (Y/n): " % full_path)
+        if answer in YES:
+            return full_path
+    return None
 
 def title(text):
     dashes = "-" * 10
