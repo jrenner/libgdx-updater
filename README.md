@@ -11,7 +11,7 @@ Then this archive will be used to update the libraries inside your project.
 
 ====================
 ###Note:
-Currently supports Android, Desktop and GWT
+Currently supports Android, Desktop, IOS (RoboVM) and GWT
 
 ==================
 ###How to Use?
