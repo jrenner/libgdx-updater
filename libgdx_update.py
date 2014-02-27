@@ -36,7 +36,7 @@ YES = ['y', 'ye', 'yes', '']
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
-SUPPORTED_PLATFORMS = ['android', 'android_x86', 'desktop', 'gwt']
+SUPPORTED_PLATFORMS = ['android', 'android_x86', 'desktop', 'gwt', 'ios']
 
 CORE_LIBS =     [
                 "gdx.jar",
@@ -59,7 +59,13 @@ ANDROID_X86_LIBS = [
                 "x86/libgdx.so",
                    ]
 
-GWT_LIBS = ["gdx-backend-gwt.jar"]                
+GWT_LIBS = ["gdx-backend-gwt.jar"]
+
+ROBOVM_LIBS = [
+              "gdx-backend-robovm.jar",
+              "ios/libgdx.a",
+              "ios/libObjectAL.a"
+              ]                
 
 # parse arguments
 EPILOGUE_TEXT = "%s\n%s" % (__author__, __url__) + "\nUSE AT YOUR OWN RISK!"
@@ -172,9 +178,13 @@ def run_gwt(locations, archive):
     title("GWT")
     update_files(GWT_LIBS, locations, archive)
 
+def run_ios(locations, archive):
+    title("IOS-ROBOVM")
+    update_files(ROBOVM_LIBS, locations, archive)
+
 def search_for_lib_locations(directory):    
     platforms = []
-    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + ANDROID_X86_LIBS + GWT_LIBS
+    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + ANDROID_X86_LIBS + GWT_LIBS + ROBOVM_LIBS
     locations = {}    
     for element in search_list:
         locations[element] = None
@@ -212,6 +222,8 @@ def search_for_lib_locations(directory):
         platforms.append("desktop")
     if found_all_in_set(GWT_LIBS, found_libraries):
         platforms.append("gwt")
+    if found_all_in_set(ROBOVM_LIBS, found_libraries):
+        platforms.append("ios")
 
     print "WARNING - did not find the following:"
     for lib, loc in locations.items():
@@ -278,6 +290,8 @@ def main():
             run_android(locations, archive)
         if "gwt" in platforms:
             run_gwt(locations, archive)
+        if "ios" in platforms:
+            run_ios(locations, archive)
 
     duration = time.time() - start_time    
     print "finished updates in %s" % human_time(duration)
