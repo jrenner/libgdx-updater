@@ -36,7 +36,7 @@ YES = ['y', 'ye', 'yes', '']
 DATE_RE = r"[0-9]{1,2}-[A-Za-z]{3,4}-[0-9]{4}\s[0-9]+:[0-9]+"
 REMOTE_DATE_FORMAT = "%d-%b-%Y %H:%M"
 
-SUPPORTED_PLATFORMS = ['android', 'android_x86', 'desktop', 'gwt', 'ios']
+SUPPORTED_PLATFORMS = ['android', 'android_x86', 'desktop', 'gwt', 'ios', 'box2d']
 
 CORE_LIBS =     [
                 "gdx.jar",
@@ -66,6 +66,18 @@ ROBOVM_LIBS = [
               "ios/libgdx.a",
               "ios/libObjectAL.a"
               ]                
+
+BOX2D = [
+        "gdx-box2d.jar",
+        "gdx-box2d-natives.jar",
+        "gdx-box2d-gwt.jar",
+        "armeabi/libgdx-box2d.so",
+        "armeabi-v7a/libgdx-box2d.so",
+        "x86/libgdx-box2d.so",
+        "gdx-box2d-sources.jar",
+        "gdx-box2d-gwt-sources.jar",
+        "libgdx-box2d.a"
+        ]
 
 # parse arguments
 EPILOGUE_TEXT = "%s\n%s" % (__author__, __url__) + "\nUSE AT YOUR OWN RISK!"
@@ -134,11 +146,16 @@ def download_libgdx_zip():
             break
     return libgdx
 
-def update_files(libs, locations, archive):    
+def update_files(libs, locations, archive):
     for lib in libs:
+        # check to see if the lib exists in the project
+        if locations[lib] is None:
+            continue
         # it's time for a dirty hack - shame on me
         if lib == "gdx-sources.jar":
             archive_name = "sources/gdx-sources.jar"        
+        elif 'box2d' in lib:
+            archive_name = "extensions/gdx-box2d/" + lib
         else:
             archive_name = lib
         # end dirty hack
@@ -182,9 +199,13 @@ def run_ios(locations, archive):
     title("IOS-ROBOVM")
     update_files(ROBOVM_LIBS, locations, archive)
 
+def run_box2d(locations, archive):
+    title("EXTENSION: BOX2D")
+    update_files(BOX2D, locations, archive)
+
 def search_for_lib_locations(directory):    
     platforms = []
-    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + ANDROID_X86_LIBS + GWT_LIBS + ROBOVM_LIBS
+    search_list = CORE_LIBS + DESKTOP_LIBS + ANDROID_LIBS + ANDROID_X86_LIBS + GWT_LIBS + ROBOVM_LIBS + BOX2D
     locations = {}    
     for element in search_list:
         locations[element] = None
@@ -224,11 +245,13 @@ def search_for_lib_locations(directory):
         platforms.append("gwt")
     if found_all_in_set(ROBOVM_LIBS, found_libraries):
         platforms.append("ios")
+    if found_any_in_set(BOX2D, found_libraries):
+        platforms.append("box2d")
 
-    print "WARNING - did not find the following:"
-    for lib, loc in locations.items():
-        if loc == None:
-            print "\t%s not found" % lib
+    #print "WARNING - did not find the following:"
+    #for lib, loc in locations.items():
+    #    if loc == None:
+    #        print "\t%s not found" % lib
 
     for lib, loc in locations.items():
         if loc != None:
@@ -241,6 +264,12 @@ def found_all_in_set(lib_set, found_list):
         if lib not in found_list:
             return False
     return True
+
+def found_any_in_set(lib_set, found_list):
+    for lib in lib_set:
+        if lib in found_list:
+            return True
+    return False
 
 def main():
     global ARCHIVE    
@@ -255,7 +284,8 @@ def main():
         if supported in platforms:
             print "found libraries for platform: %s" % supported.upper()
         else:
-            print "WARNING: did not find libraries for platform: %s - WILL NOT UPDATE" % supported.upper()
+            pass
+            #print "WARNING: did not find libraries for platform: %s - WILL NOT UPDATE" % supported.upper()
 
     if ARCHIVE == None:
         print "checking latest nightly..."
@@ -292,6 +322,8 @@ def main():
             run_gwt(locations, archive)
         if "ios" in platforms:
             run_ios(locations, archive)
+        if "box2d" in platforms:
+            run_box2d(locations, archive)
 
     duration = time.time() - start_time    
     print "finished updates in %s" % human_time(duration)
