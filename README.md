@@ -11,7 +11,11 @@ Then this archive will be used to update the libraries inside your project.
 
 ====================
 ###Note:
-Currently supports Android, Desktop, IOS (RoboVM) and GWT
+Currently supports Android, Desktop, iOS (RoboVM) and GWT
+
+Supported Extensions:
+Box2D
+Bullet
 
 ==================
 ###How to Use?
