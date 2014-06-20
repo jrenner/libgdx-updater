@@ -76,7 +76,7 @@ BOX2D = [
         "x86/libgdx-box2d.so",
         "gdx-box2d-sources.jar",
         "gdx-box2d-gwt-sources.jar",
-        "libgdx-box2d.a"
+        "ios/libgdx-box2d.a"
         ]
 
 BULLET = [
