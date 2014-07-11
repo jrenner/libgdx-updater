@@ -33,31 +33,65 @@ run the script with -h to see more options
 ###Example Usage
 (running in project directory)
 ```
-jrenner@main:~/projects/missile$ python libgdx_update.py
-finding local libraries in /home/jrenner/projects/missile
+jrenner@pc:~/tac$ libgdx-updater 
+finding local libraries in /home/jrenner/projects/tac
+WARNING - did not find the following:
+	armeabi-v7a/libgdx-box2d.so not found
+	x86/libgdx-box2d.so not found
+	gdx-box2d-natives.jar not found
+	armeabi/libgdx-box2d.so not found
+	gdx-box2d.jar not found
+	ios/libObjectAL.a not found
+	gdx-backend-gwt.jar not found
+	x86/libgdx.so not found
+	sources/gdx-bullet-sources.jar not found
+	ios/libdgx-bullet.a not found
+	ios/libgdx-box2d.a not found
+	gdx-box2d-sources.jar not found
+	x86/libgdx-bullet.so not found
+	ios/libgdx.a not found
+	armeabi-v7a/libgdx-bullet.so not found
+	gdx-box2d-gwt.jar not found
+	armeabi/libgdx-bullet.so not found
+	gdx-backend-robovm.jar not found
+	gdx-box2d-gwt-sources.jar not found
+found gdx-sources.jar -> /home/jrenner/projects/tac/main/libs
+found gdx-bullet-natives.jar -> /home/jrenner/projects/tac/desktop/libs
+found gdx-natives.jar -> /home/jrenner/projects/tac/desktop/libs
+found gdx-backend-android.jar -> /home/jrenner/projects/tac/android/libs
+found gdx-backend-lwjgl.jar -> /home/jrenner/projects/tac/desktop/libs
+found gdx.jar -> /home/jrenner/projects/tac/main/libs
+found gdx-bullet.jar -> /home/jrenner/projects/tac/main/libs
+found armeabi-v7a/libgdx.so -> /home/jrenner/projects/tac/android/libs/armeabi-v7a
+found gdx-backend-lwjgl-natives.jar -> /home/jrenner/projects/tac/desktop/libs
+found armeabi/libgdx.so -> /home/jrenner/projects/tac/android/libs/armeabi
 found CORE libraries
 found libraries for platform: ANDROID
 found libraries for platform: DESKTOP
-WARNING: did not find libraries for platform: GWT - WILL NOT UPDATE
+found libraries for platform: BULLET
 checking latest nightly...
 -- OK --
-lastest nightly from server: 2013-06-22 03:45:00
-replace local libraries with files from latest nightly?(Y/n): y
+lastest nightly from server: 2014-07-10 21:56:00
+replace local libraries with files from latest nightly?(Y/n): Y
 downloading file: http://libgdx.badlogicgames.com/nightlies/libgdx-nightly-latest.zip
-progress:         46.46 / 46.46 mB (100% complete)finished download
+progress:         42.50 / 42.50 MB (100% complete)
+finished download
 ---------- CORE ----------
-extracted to /home/jrenner/projects/missile/main/libs/gdx.jar
+extracted to /home/jrenner/projects/tac/main/libs/gdx.jar
+extracted to /home/jrenner/projects/tac/main/libs/gdx-sources.jar
 ---------- DESKTOP ----------
-extracted to /home/jrenner/projects/missile/desktop/libs/gdx-backend-lwjgl.jar
-extracted to /home/jrenner/projects/missile/desktop/libs/gdx-backend-lwjgl-natives.jar
-extracted to /home/jrenner/projects/missile/desktop/libs/gdx-natives.jar
+extracted to /home/jrenner/projects/tac/desktop/libs/gdx-backend-lwjgl.jar
+extracted to /home/jrenner/projects/tac/desktop/libs/gdx-backend-lwjgl-natives.jar
+extracted to /home/jrenner/projects/tac/desktop/libs/gdx-natives.jar
 ---------- ANDROID ----------
-extracted to /home/jrenner/projects/missile/android/libs/gdx-backend-android.jar
-extracted to /home/jrenner/projects/missile/android/libs/armeabi/libgdx.so
-extracted to /home/jrenner/projects/missile/android/libs/armeabi/libandroidgl20.so
-extracted to /home/jrenner/projects/missile/android/libs/armeabi-v7a/libgdx.so
-extracted to /home/jrenner/projects/missile/android/libs/armeabi-v7a/libandroidgl20.so
-finished updates (815.68 seconds)
+extracted to /home/jrenner/projects/tac/android/libs/gdx-backend-android.jar
+extracted to /home/jrenner/projects/tac/android/libs/armeabi/libgdx.so
+extracted to /home/jrenner/projects/tac/android/libs/armeabi-v7a/libgdx.so
+---------- EXTENSION: BULLET ----------
+extracted to /home/jrenner/projects/tac/main/libs/gdx-bullet.jar
+extracted to /home/jrenner/projects/tac/desktop/libs/gdx-bullet-natives.jar
+finished updates in 1m 39.8s
+
 ```
 
 
